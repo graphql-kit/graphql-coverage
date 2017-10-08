@@ -1,9 +1,10 @@
+#!/usr/bin/env node
 import * as path from 'path';
 import * as express from 'express';
 import * as graphqlHTTP from 'express-graphql';
 import {red, green, blue} from 'chalk';
 import fetch from 'node-fetch';
-import { Kind, print, introspectionQuery, buildClientSchema, visit, TypeInfo, visitWithTypeInfo } from 'graphql';
+import { Kind, TypeInfo, print, visit, visitWithTypeInfo, buildClientSchema, introspectionQuery } from 'graphql';
 
 const coverage = {};
 const originUrl = process.argv[2];
@@ -35,7 +36,6 @@ async function graphqlFetch(body) {
     throw Error(`${res.status} ${res.statusText}\n${await res.text()}`);
   return res.json();
 }
-
 async function execute({schema, document, variableValues: variables, operationName}) {
   const typeInfo = new TypeInfo(schema);
   visit(document, visitWithTypeInfo(typeInfo, {
