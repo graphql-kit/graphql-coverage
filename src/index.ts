@@ -10,18 +10,18 @@ const originUrl = process.argv[2];
 if (!originUrl) throw Error('Specify URL as the 1st argument!');
 
 (async () => {
-  const introspection = await graphqlFetch({query: introspectionQuery});
-  if (introspection.errors) throw Error(JSON.stringify(introspection.errors, null, 2));
-  const schema = buildClientSchema(introspection.data), app = express();
+  const {errors, data} = await graphqlFetch({query: introspectionQuery});
+  if (errors) throw Error(JSON.stringify(errors, null, 2));
+  const schema = buildClientSchema(data);
+  const app = express();
   const formatErrorFn = (err) => err;
   app.use('/graphql', graphqlHTTP({ schema, execute, graphiql: true, formatErrorFn }));
   app.get('/coverage-map', (_, res) => res.status(200).json(coverage));
   app.use('/coverage', express.static(path.join(__dirname, 'static')));
-  const port = 9003;
-  app.listen(port);
+  app.listen(9003);
   console.log(`\n${green('✔')} Your GraphQL Fake API is ready to use 🚀 \n
-  ${blue('❯')} Coverage Graph:\t http://localhost:${port}/coverage
-  ${blue('❯')} GraphQL API:\t http://localhost:${port}/graphql`);
+  ${blue('❯')} Coverage Graph:\t http://localhost:9003/coverage
+  ${blue('❯')} GraphQL API:\t http://localhost:9003/graphql`);
 })()
   .catch(error => console.error(red(error.stack)));
 
@@ -29,7 +29,7 @@ async function graphqlFetch(body) {
   const res = await fetch(originUrl, {
     method: 'POST',
     body: JSON.stringify(body),
-    headers: { "content-type": 'application/json' },
+    headers: { 'content-type': 'application/json' },
   });
   if (!res.ok)
     throw Error(`${res.status} ${res.statusText}\n${await res.text()}`);
