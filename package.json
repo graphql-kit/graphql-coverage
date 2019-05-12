@@ -1,6 +1,6 @@
 {
   "name": "graphql-coverage",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Show which resolvers are triggered by your GraphQL queries",
   "main": "index.js",
   "bin": "dist/index.js",
